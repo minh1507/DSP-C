@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.egg-info/
+dist/
+build/
+*.egg
+.env
+*.env
+venv/
+vuln_env/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# VS Code / IDE
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Data
+dataset/
+*.zip
+*.tar.gz
+*.csv
+*.json
+*.sqlite
+*.db
+*.h5
+*.pt
+*.pth
+
+# Tree-sitter build
+build/
+
+# Logs
+*.log
+logs/
