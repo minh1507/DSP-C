@@ -3,6 +3,7 @@ import seaborn as sns
 import numpy as np
 from sklearn.metrics import roc_curve, confusion_matrix
 import os
+import math
 
 
 def plot_confusion_matrix(y_true, y_pred, model_name, save_path=None):
@@ -59,8 +60,11 @@ def plot_metrics_comparison(metrics_dict, save_path=None):
     data = {metric: [metrics_dict[model].get(metric, 0) for model in models] 
             for metric in metric_names}
     
-    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-    axes = axes.flatten()
+    total_metrics = len(metric_names)
+    cols = 2 if total_metrics > 1 else 1
+    rows = math.ceil(total_metrics / cols)
+    fig, axes = plt.subplots(rows, cols, figsize=(cols * 6, rows * 4))
+    axes = np.array(axes).reshape(-1)
     
     for idx, metric in enumerate(metric_names):
         ax = axes[idx]
@@ -78,6 +82,9 @@ def plot_metrics_comparison(metrics_dict, save_path=None):
                    ha='center', va='bottom')
         
         plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha='right')
+    
+    for extra_ax in axes[total_metrics:]:
+        extra_ax.axis('off')
     
     plt.tight_layout()
     
