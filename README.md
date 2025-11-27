@@ -34,8 +34,10 @@ python scripts/preprocess_data.py
 ### 2. Huấn luyện mô hình
 
 ```bash
-python scripts/train.py --model all --epochs 50
+python scripts/train.py --model all --epochs 50 --device cuda
 ```
+
+Nếu không có GPU, bỏ `--device cuda` hoặc đặt `--device cpu`.
 
 ### 3. Chạy API Server
 

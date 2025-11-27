@@ -31,6 +31,18 @@ def main():
     import torch
     from src.config.settings import MODELS_DIR, RESULTS_DIR
     
+    if args.device == 'cuda' and not torch.cuda.is_available():
+        logger.error("CUDA requested but not available. Please install CUDA-enabled PyTorch or use --device cpu.")
+        return
+    
+    resolved_device = args.device
+    if args.device == 'auto':
+        resolved_device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    
+    use_pin_memory = resolved_device.startswith('cuda')
+    
+    logger.info(f"Using device: {resolved_device.upper()}")
+    
     if not (DATA_DIR / "X_train.npy").exists():
         logger.error("Processed data not found. Please run data preprocessing first.")
         return
@@ -55,12 +67,27 @@ def main():
         test_dataset = SequenceDataset(X_test, y_test)
         
         batch_size = args.batch_size or TRAINING_CONFIG['batch_size']
-        train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-        val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-        test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+        train_loader = DataLoader(
+            train_dataset,
+            batch_size=batch_size,
+            shuffle=True,
+            pin_memory=use_pin_memory
+        )
+        val_loader = DataLoader(
+            val_dataset,
+            batch_size=batch_size,
+            shuffle=False,
+            pin_memory=use_pin_memory
+        )
+        test_loader = DataLoader(
+            test_dataset,
+            batch_size=batch_size,
+            shuffle=False,
+            pin_memory=use_pin_memory
+        )
         
         logger.info("Training MLP Model")
-        trainer = ModelTrainer('mlp', args.device)
+        trainer = ModelTrainer('mlp', resolved_device)
         history, model = trainer.train_mlp(
             train_loader, val_loader,
             epochs=args.epochs, lr=args.lr
@@ -98,12 +125,27 @@ def main():
             graph_val_dataset = GraphDataset(graph_X_val, graph_adj_val, graph_y_val)
             graph_test_dataset = GraphDataset(graph_X_test, graph_adj_test, graph_y_test)
             
-            graph_train_loader = DataLoader(graph_train_dataset, batch_size=batch_size, shuffle=True)
-            graph_val_loader = DataLoader(graph_val_dataset, batch_size=batch_size, shuffle=False)
-            graph_test_loader = DataLoader(graph_test_dataset, batch_size=batch_size, shuffle=False)
+            graph_train_loader = DataLoader(
+                graph_train_dataset,
+                batch_size=batch_size,
+                shuffle=True,
+                pin_memory=use_pin_memory
+            )
+            graph_val_loader = DataLoader(
+                graph_val_dataset,
+                batch_size=batch_size,
+                shuffle=False,
+                pin_memory=use_pin_memory
+            )
+            graph_test_loader = DataLoader(
+                graph_test_dataset,
+                batch_size=batch_size,
+                shuffle=False,
+                pin_memory=use_pin_memory
+            )
             
             logger.info("Training GCN Model")
-            trainer = ModelTrainer('gcn', args.device)
+            trainer = ModelTrainer('gcn', resolved_device)
             history, model = trainer.train_gcn_gat(
                 graph_train_loader, graph_val_loader,
                 epochs=args.epochs, lr=args.lr
@@ -124,12 +166,27 @@ def main():
             graph_val_dataset = GraphDataset(graph_X_val, graph_adj_val, graph_y_val)
             graph_test_dataset = GraphDataset(graph_X_test, graph_adj_test, graph_y_test)
             
-            graph_train_loader = DataLoader(graph_train_dataset, batch_size=batch_size, shuffle=True)
-            graph_val_loader = DataLoader(graph_val_dataset, batch_size=batch_size, shuffle=False)
-            graph_test_loader = DataLoader(graph_test_dataset, batch_size=batch_size, shuffle=False)
+            graph_train_loader = DataLoader(
+                graph_train_dataset,
+                batch_size=batch_size,
+                shuffle=True,
+                pin_memory=use_pin_memory
+            )
+            graph_val_loader = DataLoader(
+                graph_val_dataset,
+                batch_size=batch_size,
+                shuffle=False,
+                pin_memory=use_pin_memory
+            )
+            graph_test_loader = DataLoader(
+                graph_test_dataset,
+                batch_size=batch_size,
+                shuffle=False,
+                pin_memory=use_pin_memory
+            )
             
             logger.info("Training GAT Model")
-            trainer = ModelTrainer('gat', args.device)
+            trainer = ModelTrainer('gat', resolved_device)
             history, model = trainer.train_gcn_gat(
                 graph_train_loader, graph_val_loader,
                 epochs=args.epochs, lr=args.lr

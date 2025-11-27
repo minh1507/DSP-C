@@ -128,6 +128,14 @@ Tất cả configuration được quản lý tập trung trong `src/config/setti
 5. Evaluate trên test set
 6. Save model và metrics
 
+### Lệnh Huấn luyện
+```bash
+python scripts/train.py --model all --epochs 50 --device cuda
+```
+- Dùng `--device cuda` để khai thác GPU (dùng `cpu` nếu không có GPU)
+- `--model` có thể là `mlp`, `gcn`, `gat` hoặc `all`
+- `--epochs`, `--batch_size`, `--lr` có thể tùy chỉnh
+
 ### Inference Flow
 1. Load preprocessor
 2. Load trained model
