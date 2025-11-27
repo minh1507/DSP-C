@@ -30,43 +30,26 @@ ENV/
 *.swo
 *~
 
-data/
-saved_models/
-results/
-*.pth
-*.pkl
-*.npy
-*.json
-
-.DS_Store
-Thumbs.db
+.git/
+.gitignore
+*.md
+*.txt
 
 .ipynb_checkpoints/
 *.ipynb
 
 *.log
 
-__pycache__/
-*.pyc
-.pytest_cache/
-.coverage
-htmlcov/
+results/
+*.png
+*.jpg
+*.jpeg
 
-*.h5
-*.ckpt
-*.pt
-*.pb
-*.onnx
-
-checkpoints/
-logs/
-wandb/
-tensorboard/
-
+dataset/
 *.zip
 *.tar
 *.gz
 
-dataset/dataset_final_sorted/
-*.list
-*.json
+.DS_Store
+Thumbs.db
+

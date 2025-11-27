@@ -1,0 +1,249 @@
+= Source Code Vulnerability Detection API
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:source-highlighter: highlight.js
+
+== Tổng quan
+
+API phát hiện lỗ hổng bảo mật trong mã nguồn sử dụng các mô hình Deep Learning.
+
+=== Base URL
+
+[source]
+----
+http://localhost:8000
+----
+
+=== Authentication
+
+Hiện tại API không yêu cầu authentication.
+
+== Endpoints
+
+=== Health Check
+
+Kiểm tra trạng thái của API server.
+
+==== Request
+
+[source,http]
+----
+GET /health HTTP/1.1
+Host: localhost:8000
+----
+
+==== Response
+
+[source,json]
+----
+{
+  "status": "healthy"
+}
+----
+
+=== Root Information
+
+Lấy thông tin về API.
+
+==== Request
+
+[source,http]
+----
+GET / HTTP/1.1
+Host: localhost:8000
+----
+
+==== Response
+
+[source,json]
+----
+{
+  "message": "Source Code Vulnerability Detection API",
+  "version": "1.0.0",
+  "available_models": ["mlp", "gcn", "gat"]
+}
+----
+
+=== Predict from Code
+
+Dự đoán lỗ hổng từ mã nguồn.
+
+==== Request
+
+[source,http]
+----
+POST /predict HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+
+{
+  "code": "void vulnerable_function(char *input) { strcpy(buffer, input); }",
+  "model_type": "mlp"
+}
+----
+
+==== Request Parameters
+
+[cols="1,2,1,1"]
+|===
+|Parameter |Description |Type |Required
+|code |Mã nguồn cần phân tích |string |Yes
+|model_type |Loại model: mlp, gcn, hoặc gat |string |Yes
+|===
+
+==== Response
+
+[source,json]
+----
+{
+  "model_type": "mlp",
+  "prediction": "Vulnerable",
+  "confidence": 0.9234,
+  "probabilities": {
+    "Non-Vulnerable": 0.0766,
+    "Vulnerable": 0.9234
+  }
+}
+----
+
+==== Response Fields
+
+[cols="1,3"]
+|===
+|Field |Description
+|model_type |Loại model được sử dụng
+|prediction |Kết quả dự đoán: "Vulnerable" hoặc "Non-Vulnerable"
+|confidence |Độ tin cậy của dự đoán (0.0 - 1.0)
+|probabilities |Xác suất cho từng lớp
+|===
+
+=== Predict from File Path
+
+Dự đoán lỗ hổng từ đường dẫn file.
+
+==== Request
+
+[source,http]
+----
+POST /predict/file?file_path=/path/to/file.c&model_type=mlp HTTP/1.1
+Host: localhost:8000
+----
+
+==== Query Parameters
+
+[cols="1,2,1,1"]
+|===
+|Parameter |Description |Type |Required
+|file_path |Đường dẫn đến file mã nguồn |string |Yes
+|model_type |Loại model: mlp, gcn, hoặc gat |string |Yes
+|===
+
+==== Response
+
+Tương tự như endpoint `/predict`
+
+== Error Responses
+
+=== 400 Bad Request
+
+[source,json]
+----
+{
+  "detail": "Code is required"
+}
+----
+
+=== 500 Internal Server Error
+
+[source,json]
+----
+{
+  "detail": "Error loading model: Model not found"
+}
+----
+
+== Model Types
+
+=== MLP (Multi-Layer Perceptron)
+
+- Nhanh nhất
+- Phù hợp cho dữ liệu tuần tự
+- Input: Sequence of tokens
+
+=== GCN (Graph Convolutional Network)
+
+- Trung bình về tốc độ
+- Mô hình hóa quan hệ trong code
+- Input: Graph structure
+
+=== GAT (Graph Attention Network)
+
+- Chậm nhất nhưng chính xác
+- Attention mechanism
+- Input: Graph structure
+
+== Ví dụ Sử dụng
+
+=== Python
+
+[source,python]
+----
+import requests
+
+response = requests.post(
+    "http://localhost:8000/predict",
+    json={
+        "code": "void vulnerable_function(char *input) { strcpy(buffer, input); }",
+        "model_type": "mlp"
+    }
+)
+
+result = response.json()
+print(f"Prediction: {result['prediction']}")
+print(f"Confidence: {result['confidence']}")
+----
+
+=== cURL
+
+[source,bash]
+----
+curl -X POST "http://localhost:8000/predict" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "code": "void vulnerable_function(char *input) { strcpy(buffer, input); }",
+       "model_type": "mlp"
+     }'
+----
+
+=== JavaScript
+
+[source,javascript]
+----
+fetch('http://localhost:8000/predict', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    code: 'void vulnerable_function(char *input) { strcpy(buffer, input); }',
+    model_type: 'mlp'
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data));
+----
+
+== Rate Limiting
+
+Hiện tại không có rate limiting. Sẽ được thêm trong phiên bản tương lai.
+
+== Versioning
+
+API version hiện tại: 1.0.0
+
+== Support
+
+Liên hệ team phát triển để được hỗ trợ.
+
