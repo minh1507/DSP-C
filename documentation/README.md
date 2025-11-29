@@ -70,10 +70,6 @@ Hệ thống hỗ trợ ba kiến trúc mô hình:
 - **Models Location**: `saved_models/`
 - **Results Location**: `results/`
 
-## Lưu Ý Quan Trọng
-
-⚠️ **Tài liệu này chỉ mang tính chất mô tả và hướng dẫn sử dụng hệ thống hiện có. Không được phép chỉnh sửa source code.**
-
 ## Tài Liệu Liên Quan
 
 - [README chính](../README.md): Tổng quan về dự án
